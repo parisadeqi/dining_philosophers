@@ -12,7 +12,7 @@
 
 NAME := philo
 CC := cc
-CFLAGS := -Wall -Wextra -Werror -g -pthread -gfsanitize=thread
+CFLAGS := -Wall -Wextra -Werror -g -pthread -fsanitize=thread
 HEADERS := -I includes
 SRC_DIR := source
 OBJ_DIR := object
