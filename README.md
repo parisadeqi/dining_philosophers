@@ -2,7 +2,7 @@
 
 # About the project
 
-This project is based on the <a href="https://en.wikipedia.org/wiki/Dining_philosophers_problem">Dining Philosophers Problem</a> but with some diffrences which you can find in the subject of this project in the file subject.en.
+This project is based on the <a href="https://en.wikipedia.org/wiki/Dining_philosophers_problem">Dining Philosophers Problem</a> but with some diffrences which you can find in the subject of this project in the file named en.subject.pdf
 
 ## Build
 You can run this command to build this project
