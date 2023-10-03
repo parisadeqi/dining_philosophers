@@ -12,16 +12,19 @@
 
 NAME := philo
 CC := cc
-CFLAGS := -Wall -Wextra -Werror -g -pthread -fsanitize=thread
+CFLAGS := -Wall -Wextra -Werror
 HEADERS := -I includes
 SRC_DIR := source
 OBJ_DIR := object
 SRC := \
 		main.c\
+		put_data.c\
 		ft_atoi.c\
 		prepare_philos.c\
+		prepare_forks.c\
 		routine.c\
 		checker.c\
+		destroy_free.c\
 		utils.c\
 		
 SRC := $(SRC:%=$(SRC_DIR)/%)
@@ -41,12 +44,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 clean:
 	@$(RM) $(OBJ_DIR)
-	# @$(MAKE) -C $(LIBFT) clean
 
 fclean: clean
 	@$(RM) $(NAME)
-	# @$(MAKE) -C $(LIBFT) fclean
 
 re: fclean all
 
-.PHONY: all clean fclean
+.PHONY: all clean fclean re

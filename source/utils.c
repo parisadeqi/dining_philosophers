@@ -35,7 +35,7 @@ void	accurate_usleep(uint64_t time, t_philo *philo)
 
 uint64_t	get_time_ms(void)
 {
-	struct timeval	tv;
+	struct timeval		tv;
 	uint64_t			time;
 
 	gettimeofday(&tv, NULL);
@@ -43,35 +43,40 @@ uint64_t	get_time_ms(void)
 	return (time);
 }
 
-void	lock_forks(t_philo *philo)
-{
-	if ((philo->philo_index + 1) % 2 != 0)
-	{
-		pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
-		pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
-	}
-	if ((philo->philo_index + 1) % 2 == 0)
-	{
-		pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
-		pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
-	}
-}
-
-void	unlock_forks(t_philo *philo)
-{
-	pthread_mutex_unlock(&philo->data->forks[philo->left_fork]);
-	pthread_mutex_unlock(&philo->data->forks[philo->right_fork]);
-}
-
 void	print_action(int index, char *action, t_data *data)
 {
 	uint64_t	time_now;
 
-	time_now = get_time_ms() - data->start_time;
 	if (check_death(data) == 0)
 	{
 		pthread_mutex_lock(&data->write);
-		printf("%lld %d %s\n", time_now, index, action);
+		time_now = get_time_ms() - data->start_time;
+		if (check_death(data) != 0)
+		{
+			pthread_mutex_unlock(&data->write);
+			return ;
+		}
+		printf("%lu %d %s\n", time_now, index, action);
 		pthread_mutex_unlock(&data->write);
 	}
+}
+
+void	single_philo(t_philo *philo)
+{
+	if ((philo->philo_index + 1) % 2 != 0)
+	{
+		pthread_mutex_unlock(&philo->data->forks[philo->right_fork]);
+	}
+	if ((philo->philo_index + 1) % 2 == 0)
+	{
+		pthread_mutex_unlock(&philo->data->forks[philo->left_fork]);
+	}
+}
+
+int	ft_isdigit(int c)
+{
+	if (c > 47 && c < 58)
+		return (0);
+	else
+		return (1);
 }

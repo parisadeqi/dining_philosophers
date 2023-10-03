@@ -29,15 +29,15 @@ int	eating_times_check(t_data *data, int i)
 {
 	if (data->count_must_eat != 0)
 	{
-		pthread_mutex_lock(&data->philo_struct[i].lock);
+		pthread_mutex_lock(&data->philo_struct[i].time_lock);
 		if (data->philo_struct[i].eating_times > data->count_must_eat)
 		{
-			pthread_mutex_unlock(&data->philo_struct[i].lock);
+			pthread_mutex_unlock(&data->philo_struct[i].time_lock);
 			return (0);
 		}
 		else
 		{
-			pthread_mutex_unlock(&data->philo_struct[i].lock);
+			pthread_mutex_unlock(&data->philo_struct[i].time_lock);
 			i++;
 		}
 	}
@@ -48,23 +48,28 @@ int	eating_times_check(t_data *data, int i)
 
 void	death_announcement(t_data *data, int i)
 {
-	print_action(i + 1, "died", data);
+	uint64_t	time_now;
+
+	pthread_mutex_lock(&data->write);
 	pthread_mutex_lock(&data->death);
 	data->dead_philo = true;
+	time_now = get_time_ms() - data->start_time;
+	printf("%lu %d %s\n", time_now, i + 1, "is dead");
 	pthread_mutex_unlock(&data->death);
+	pthread_mutex_unlock(&data->write);
 }
 
 int	supervisor(t_data *data, int i)
 {
 	uint64_t	time_now;
 	uint64_t	time_after_eat;
-	int		res;
+	int			res;
 
-	pthread_mutex_lock(&data->philo_struct[i].lock);
+	pthread_mutex_lock(&data->philo_struct[i].time_lock);
 	time_now = get_time_ms() - data->start_time;
 	time_after_eat = time_now - data->philo_struct[i].last_time_eat;
-	pthread_mutex_unlock(&data->philo_struct[i].lock);
-	if (time_after_eat < data->time_to_die)
+	pthread_mutex_unlock(&data->philo_struct[i].time_lock);
+	if (time_after_eat <= data->time_to_die)
 	{
 		res = eating_times_check(data, i);
 		if (res == 0)
@@ -88,7 +93,7 @@ void	*health_checker(void *data_temp)
 
 	i = 0;
 	data = (t_data *)data_temp;
-	while (1)
+	while (check_death(data) == 0)
 	{
 		while (i < data->philo_count)
 		{
